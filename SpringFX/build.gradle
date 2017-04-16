@@ -1,0 +1,44 @@
+group 'org.inthemoon.spring'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'maven'
+apply plugin: "maven-publish"
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+
+    compile group: 'org.inthemoon.spring', name: 'childcontext', version: '1.0-SNAPSHOT'
+
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
+
+    compile 'org.springframework:spring-context:4.3.4.RELEASE'
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+
+tasks.create('sourceJar', Jar) {
+    dependsOn tasks.classes
+    from sourceSets.main.allSource
+    classifier 'sources'
+    extension 'jar'
+    group 'build'
+}
+
+
+publishing {
+    publications {
+        nebula(MavenPublication) {
+            artifact tasks.sourceJar
+        }
+    }
+}
