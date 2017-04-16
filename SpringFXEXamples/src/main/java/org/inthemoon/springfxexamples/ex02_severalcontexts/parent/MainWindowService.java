@@ -6,7 +6,16 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 /**
- * This is a bean in parent context, which instantiates child context for JavaFX
+ * This bean resides in parent context, but knows all configuration of child context, it can create</p>
+ *
+ * This is information is provided by:</p>
+ *
+ * 1) by base class of {@link SpringFX}</p>
+ *
+ * 2) annotation {@link PropertySource} provides information about property file</p>
+ *
+ * 3) annotation of {@link ChildComponentScan} provides information about child context. Here we define
+ * child context by component scan. It is scanned only on child context creation with {@link #createChildContext()}
  *
  * Created by Dims on 15.04.2017.
  */
