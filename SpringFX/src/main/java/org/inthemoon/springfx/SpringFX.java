@@ -30,9 +30,8 @@ public class SpringFX extends ChildContextFactory {
 
    @Override
    public AnnotationConfigApplicationContext createChildContext() {
-      AnnotationConfigApplicationContext childContext = super.createChildContext();
-      childContext.register(FXConfig.class);
-      return childContext;
+      register(FXConfig.class);
+      return super.createChildContext();
    }
 
    public SpringFX(Class<?>... annotatedClasses) {

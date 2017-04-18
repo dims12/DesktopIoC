@@ -20,12 +20,7 @@ public class SpringFXML extends ChildContextFactory {
 
    @Override
    public AnnotationConfigApplicationContext createChildContext() {
-      AnnotationConfigApplicationContext childContext = super.createChildContext();
-
-
-      childContext.register(FXMLConfig.class);
-
-
-      return childContext;
+      register(FXMLConfig.class);
+      return super.createChildContext();
    }
 }
