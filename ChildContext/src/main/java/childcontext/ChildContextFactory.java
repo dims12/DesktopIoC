@@ -9,6 +9,8 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.support.ResourcePropertySource;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
 
 /**
  * This factory is a bean, that "lives" in parent context and is able
@@ -41,24 +43,18 @@ public class ChildContextFactory implements ApplicationContextAware {
    }
 
 
-   private String[] basePackages;
-   private Class<?>[] annotatedClasses;
+   private final HashSet<String> basePackages = new HashSet<>();
+   private final HashSet<Class<?>> annotatedClasses = new HashSet<>();
 
    public void register(Class<?>... newAnnotatedClasses) {
-      if( annotatedClasses == null ) {
-         annotatedClasses = new Class<?>[0];
-      }
       for(Class<?> clz : newAnnotatedClasses ) {
          registerSinglePropertyAnnotations(clz);
+         annotatedClasses.add(clz);
       }
-      annotatedClasses = ArrayUtils.addAll(annotatedClasses, newAnnotatedClasses);
    }
 
    public void registerScans(String... basePackages) {
-      if (basePackages == null) {
-         this.basePackages = new String[0];
-      }
-      this.basePackages = ArrayUtils.addAll(this.basePackages, basePackages);
+      this.basePackages.addAll(Arrays.asList(basePackages));
    }
 
    private void registerChildContextAnnotations() {
@@ -129,31 +125,34 @@ public class ChildContextFactory implements ApplicationContextAware {
 
 
    /**
-    * Workhorse method. Creates and initializes new instance of child context
+    * Workhorse method. Creates and initializes new instance of child context</p>
+    *
+    * Descendens should call {@link #register} (not {@link AnnotationConfigApplicationContext#register(Class[])}
+    * BEFORE call to super.
     *
     * @return
     */
-   public final AnnotationConfigApplicationContext createChildContext() {
+   public AnnotationConfigApplicationContext createChildContext() {
       AnnotationConfigApplicationContext childContext = new AnnotationConfigApplicationContext();
       childContext.setParent(getParentApplicationContext());
 
-      childContext.register(ChildContextConfig.class);
+      register(ChildContextConfig.class);
       childContext.getBeanFactory().addBeanPostProcessor(new ChildContextFactoryAwarePostProcessor(this));
 
+      registerSinglePropertyAnnotations(getClass());
+      registerPropertySourceAnnotations();
 
-      if (basePackages != null && basePackages.length > 0) {
-         childContext.scan(basePackages);
-      } else if (annotatedClasses != null && annotatedClasses.length>0) {
-         childContext.register(annotatedClasses);
+      if (basePackages.size() > 0) {
+         childContext.scan(basePackages.toArray(new String[0]));
+      }
+      if (annotatedClasses.size()>0) {
+         childContext.register(annotatedClasses.toArray(new Class<?>[0]));
       }
 
       disposeLastChildContext();
 
       lastChildContext = childContext;
       lastChildContext.getEnvironment().getPropertySources().addLast(singlePropertiesSource);
-
-      registerSinglePropertyAnnotations(getClass());
-      registerPropertySourceAnnotations();
 
       return childContext;
    }
