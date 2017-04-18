@@ -48,6 +48,9 @@ public class ChildContextFactory implements ApplicationContextAware {
       if( annotatedClasses == null ) {
          annotatedClasses = new Class<?>[0];
       }
+      for(Class<?> clz : newAnnotatedClasses ) {
+         registerSinglePropertyAnnotations(clz);
+      }
       annotatedClasses = ArrayUtils.addAll(annotatedClasses, newAnnotatedClasses);
    }
 
@@ -70,8 +73,8 @@ public class ChildContextFactory implements ApplicationContextAware {
       }
    }
 
-   private void registerSinglePropertyAnnotations()  {
-      for (SingleProperty singleProperty : getClass().getAnnotationsByType(SingleProperty.class)) {
+   private void registerSinglePropertyAnnotations(Class<?> clz)  {
+      for (SingleProperty singleProperty : clz.getAnnotationsByType(SingleProperty.class)) {
          setContextProperty(singleProperty.key(), singleProperty.value());
       }
    }
@@ -130,9 +133,14 @@ public class ChildContextFactory implements ApplicationContextAware {
     *
     * @return
     */
-   public AnnotationConfigApplicationContext createChildContext() {
+   public final AnnotationConfigApplicationContext createChildContext() {
       AnnotationConfigApplicationContext childContext = new AnnotationConfigApplicationContext();
       childContext.setParent(getParentApplicationContext());
+
+      childContext.register(ChildContextConfig.class);
+      childContext.getBeanFactory().addBeanPostProcessor(new ChildContextFactoryAwarePostProcessor(this));
+
+
       if (basePackages != null && basePackages.length > 0) {
          childContext.scan(basePackages);
       } else if (annotatedClasses != null && annotatedClasses.length>0) {
@@ -144,7 +152,7 @@ public class ChildContextFactory implements ApplicationContextAware {
       lastChildContext = childContext;
       lastChildContext.getEnvironment().getPropertySources().addLast(singlePropertiesSource);
 
-      registerSinglePropertyAnnotations();
+      registerSinglePropertyAnnotations(getClass());
       registerPropertySourceAnnotations();
 
       return childContext;
