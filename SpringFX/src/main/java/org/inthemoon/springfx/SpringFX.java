@@ -23,7 +23,7 @@ public class SpringFX extends ChildContextFactory {
          staticChildContext.refresh();
 
          StageService configurer = staticChildContext.getBean(StageService.class);
-         configurer.setStage( primaryStage );
+         configurer.configureStage( primaryStage );
 
       }
    }

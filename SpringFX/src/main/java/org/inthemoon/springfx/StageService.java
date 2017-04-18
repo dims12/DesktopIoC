@@ -6,8 +6,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -16,7 +14,7 @@ import org.springframework.context.ApplicationContextAware;
 import java.io.IOException;
 
 /**
- * This is stage configurer. This bean has {@link #setStage(Stage)}
+ * This is stage configurer. This bean has {@link #configureStage(Stage)}
  * method, on which it configures assigned stage, taking required beans
  * and parameters from context</p>
  *
@@ -27,7 +25,7 @@ import java.io.IOException;
  *
  * Created by Dims on 25.03.2017.
  */
-public class StageService implements ApplicationContextAware, InitializingBean {
+public class StageService implements ApplicationContextAware {
 
    private ApplicationContext applicationContext;
 
@@ -50,6 +48,17 @@ public class StageService implements ApplicationContextAware, InitializingBean {
 
    public void setShowAfterConfigure(ShowAfterConfigure showAfterConfigure) {
       this.showAfterConfigure = showAfterConfigure;
+   }
+
+
+   private SceneMode sceneMode = SceneMode.SceneBean;
+
+   public SceneMode getSceneMode() {
+      return sceneMode;
+   }
+
+   public void setSceneMode(SceneMode sceneMode) {
+      this.sceneMode = sceneMode;
    }
 
 
@@ -111,16 +120,6 @@ public class StageService implements ApplicationContextAware, InitializingBean {
 
 
 
-   @Override
-   public void afterPropertiesSet() throws Exception {
-      if( getScene() == null && getFxmlLoader() == null ) {
-         throw new IllegalStateException("Either 'scene' or 'fxmlLoader' should be set");
-      }
-   }
-
-
-
-
 
 
    private Stage stage;
@@ -146,9 +145,16 @@ public class StageService implements ApplicationContextAware, InitializingBean {
 
 
       try {
-         if (getScene() != null) {
+         if( getSceneMode() == SceneMode.SceneBean ) {
+            if( getScene() == null ) {
+               throw new NullPointerException();
+            }
             stage.setScene(getScene());
-         } else if (getFxmlLoader() != null) {
+         }
+         else if( getSceneMode() == SceneMode.FXMLLoaderBean ) {
+            if( getFxmlLoader() == null ) {
+               throw new NullPointerException();
+            }
             stage.setScene(getFxmlLoader().load());
          }
          else {
@@ -167,7 +173,7 @@ public class StageService implements ApplicationContextAware, InitializingBean {
 
    }
 
-   public void setStage(Stage stage) {
+   public void configureStage(Stage stage) {
       this.stage = stage;
       configureStage();
    }
@@ -185,13 +191,13 @@ public class StageService implements ApplicationContextAware, InitializingBean {
 
    public Stage createStage() {
       Stage stage = new Stage();
-      setStage(stage);
+      configureStage(stage);
       return stage;
    }
 
    public Stage createStage(StageStyle stageStyle) {
       Stage stage = new Stage(stageStyle);
-      setStage(stage);
+      configureStage(stage);
       return stage;
    }
 
