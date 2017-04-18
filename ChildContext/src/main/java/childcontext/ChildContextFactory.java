@@ -69,12 +69,21 @@ public class ChildContextFactory implements ApplicationContextAware {
       }
    }
 
+   /**
+    * Reads all {@link SingleProperty} annotations. It is used to read them both from
+    * factory class and for registered configs
+    *
+    * @param clz
+    */
    private void registerSinglePropertyAnnotations(Class<?> clz)  {
       for (SingleProperty singleProperty : clz.getAnnotationsByType(SingleProperty.class)) {
          setContextProperty(singleProperty.key(), singleProperty.value());
       }
    }
 
+   /**
+    * Registers {@link PropertySource} annotations, applied to factory, not to config
+    */
    private void registerPropertySourceAnnotations()  {
       try {
          for (PropertySource propertySource : getClass().getAnnotationsByType(PropertySource.class)) {
@@ -128,7 +137,7 @@ public class ChildContextFactory implements ApplicationContextAware {
     * Workhorse method. Creates and initializes new instance of child context</p>
     *
     * Descendens should call {@link #register} (not {@link AnnotationConfigApplicationContext#register(Class[])}
-    * BEFORE call to super.
+    * BEFORE call to super. This is required to process {@link SingleProperty} annotations, applied to config classes
     *
     * @return
     */
@@ -138,9 +147,8 @@ public class ChildContextFactory implements ApplicationContextAware {
 
       register(ChildContextConfig.class);
       childContext.getBeanFactory().addBeanPostProcessor(new ChildContextFactoryAwarePostProcessor(this));
-
       registerSinglePropertyAnnotations(getClass());
-      registerPropertySourceAnnotations();
+
 
       if (basePackages.size() > 0) {
          childContext.scan(basePackages.toArray(new String[0]));
@@ -153,6 +161,8 @@ public class ChildContextFactory implements ApplicationContextAware {
 
       lastChildContext = childContext;
       lastChildContext.getEnvironment().getPropertySources().addLast(singlePropertiesSource);
+
+      registerPropertySourceAnnotations();
 
       return childContext;
    }
