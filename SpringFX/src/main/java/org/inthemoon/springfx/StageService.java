@@ -42,13 +42,13 @@ public class StageService implements ApplicationContextAware, InitializingBean {
 
 
 
-   private boolean showAfterConfigure = true;
+   private ShowAfterConfigure showAfterConfigure = ShowAfterConfigure.Show;
 
-   public boolean isShowAfterConfigure() {
+   public ShowAfterConfigure getShowAfterConfigure() {
       return showAfterConfigure;
    }
 
-   public void setShowAfterConfigure(boolean showAfterConfigure) {
+   public void setShowAfterConfigure(ShowAfterConfigure showAfterConfigure) {
       this.showAfterConfigure = showAfterConfigure;
    }
 
@@ -158,8 +158,11 @@ public class StageService implements ApplicationContextAware, InitializingBean {
          throw new RuntimeException(e);
       }
 
-      if( isShowAfterConfigure() ) {
+      if( getShowAfterConfigure() == ShowAfterConfigure.Show ) {
          stage.show();
+      }
+      else if( getShowAfterConfigure() == ShowAfterConfigure.ShowAndWait ) {
+         stage.showAndWait();
       }
 
    }
