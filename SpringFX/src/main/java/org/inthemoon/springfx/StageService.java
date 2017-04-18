@@ -155,7 +155,7 @@ public class StageService implements ApplicationContextAware {
             if( getFxmlLoader() == null ) {
                throw new NullPointerException();
             }
-            stage.setScene(getFxmlLoader().load());
+            stage.setScene(new Scene(getFxmlLoader().load()));
          }
          else {
             throw new AssertionError();
