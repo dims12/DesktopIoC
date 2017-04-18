@@ -1,5 +1,6 @@
 package org.inthemoon.springfx;
 
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+
+import java.io.IOException;
 
 /**
  * This is stage configurer. This bean has {@link #setStage(Stage)}
@@ -24,7 +27,7 @@ import org.springframework.context.ApplicationContextAware;
  *
  * Created by Dims on 25.03.2017.
  */
-public class StageService implements ApplicationContextAware {
+public class StageService implements ApplicationContextAware, InitializingBean {
 
    private ApplicationContext applicationContext;
 
@@ -72,9 +75,22 @@ public class StageService implements ApplicationContextAware {
       return scene;
    }
 
-   @Autowired
+   @Autowired(required = false)
    public void setScene(Scene scene) {
       this.scene = scene;
+   }
+
+
+
+   private FXMLLoader fxmlLoader;
+
+   public FXMLLoader getFxmlLoader() {
+      return fxmlLoader;
+   }
+
+   @Autowired(required = false)
+   public void setFxmlLoader(FXMLLoader fxmlLoader) {
+      this.fxmlLoader = fxmlLoader;
    }
 
 
@@ -95,6 +111,17 @@ public class StageService implements ApplicationContextAware {
 
 
 
+   @Override
+   public void afterPropertiesSet() throws Exception {
+      if( getScene() == null && getFxmlLoader() == null ) {
+         throw new IllegalStateException("Either 'scene' or 'fxmlLoader' should be set");
+      }
+   }
+
+
+
+
+
 
    private Stage stage;
 
@@ -103,7 +130,7 @@ public class StageService implements ApplicationContextAware {
    }
 
 
-   protected void configureStage() {
+   protected void configureStage()  {
 
       if( stage == null ) {
          throw new NullPointerException();
@@ -118,11 +145,17 @@ public class StageService implements ApplicationContextAware {
       }
 
 
-      if( getScene() != null ) {
-         stage.setScene(getScene());
-      }
-      else {
-         throw new RuntimeException("No scene configured");
+      try {
+         if (getScene() != null) {
+            stage.setScene(getScene());
+         } else if (getFxmlLoader() != null) {
+            stage.setScene(getFxmlLoader().load());
+         }
+         else {
+            throw new AssertionError();
+         }
+      } catch (IOException e) {
+         throw new RuntimeException(e);
       }
 
       if( isShowAfterConfigure() ) {
