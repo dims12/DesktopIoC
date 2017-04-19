@@ -36,5 +36,11 @@ public class FXMLConfig {
       return fxmlLoader;
    }
 
+   @Bean
+   FXMLLoaderProxy fxmlLoaderProxy() throws IOException {
+      FXMLLoaderProxy ans = new FXMLLoaderProxy(fxmlLoader());
+      return ans;
+   }
+
 
 }

@@ -1,10 +1,12 @@
 package org.inthemoon.springfx;
 
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.inthemoon.springfx.fxml.FXMLLoaderProxy;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -91,17 +93,16 @@ public class StageService implements ApplicationContextAware {
 
 
 
-   private FXMLLoader fxmlLoader;
+   private FXMLLoaderProxy fxmlLoaderProxy;
 
-   public FXMLLoader getFxmlLoader() {
-      return fxmlLoader;
+   public FXMLLoaderProxy getFxmlLoaderProxy() {
+      return fxmlLoaderProxy;
    }
 
    @Autowired(required = false)
-   public void setFxmlLoader(FXMLLoader fxmlLoader) {
-      this.fxmlLoader = fxmlLoader;
+   public void setFxmlLoaderProxy(FXMLLoaderProxy fxmlLoaderProxy) {
+      this.fxmlLoaderProxy = fxmlLoaderProxy;
    }
-
 
 
 
@@ -144,24 +145,20 @@ public class StageService implements ApplicationContextAware {
       }
 
 
-      try {
-         if( getSceneMode() == SceneMode.SceneBean ) {
-            if( getScene() == null ) {
-               throw new NullPointerException();
-            }
-            stage.setScene(getScene());
+      if( getSceneMode() == SceneMode.SceneBean ) {
+         if( getScene() == null ) {
+            throw new NullPointerException();
          }
-         else if( getSceneMode() == SceneMode.FXMLLoaderBean ) {
-            if( getFxmlLoader() == null ) {
-               throw new NullPointerException();
-            }
-            stage.setScene(new Scene(getFxmlLoader().load()));
+         stage.setScene(getScene());
+      }
+      else if( getSceneMode() == SceneMode.FXMLLoaderBean ) {
+         if( getFxmlLoaderProxy() == null ) {
+            throw new NullPointerException();
          }
-         else {
-            throw new AssertionError();
-         }
-      } catch (IOException e) {
-         throw new RuntimeException(e);
+         stage.setScene(new Scene(getFxmlLoaderProxy().getRoot()));
+      }
+      else {
+         throw new AssertionError();
       }
 
       if( getShowAfterConfigure() == ShowAfterConfigure.Show ) {
