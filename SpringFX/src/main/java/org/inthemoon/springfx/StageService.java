@@ -1,29 +1,24 @@
 package org.inthemoon.springfx;
 
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.inthemoon.springfx.fxml.FXMLLoaderProxy;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import java.io.IOException;
-
 /**
- * This is stage configurer. This bean has {@link #configureStage(Stage)}
- * method, on which it configures assigned stage, taking required beans
+ * This is lastStage configurer. This bean has {@link #configureStage(Stage)}
+ * method, on which it configures assigned lastStage, taking required beans
  * and parameters from context</p>
  *
  * This bean is used to configure {@code primaryStage}, but it also can be used
  * to configure any stages in child contexts.</p>
  *
- * Finaly it can be use to create and configure new stage at once
+ * Finaly it can be use to create and configure new lastStage at once
  *
  * Created by Dims on 25.03.2017.
  */
@@ -113,24 +108,21 @@ public class StageService implements ApplicationContextAware {
       return title;
    }
 
-   @Value("${primaryStage.title}")
+   @Value("${stage.title}")
    public void setTitle(String title) {
       this.title = title;
    }
 
 
 
+   private Stage lastStage;
 
-
-
-   private Stage stage;
-
-   public Stage getStage() {
-      return stage;
+   public Stage getLastStage() {
+      return lastStage;
    }
 
-
-   protected void configureStage()  {
+   public void configureStage(Stage stage) {
+      this.lastStage = stage;
 
       if( stage == null ) {
          throw new NullPointerException();
@@ -155,7 +147,7 @@ public class StageService implements ApplicationContextAware {
          if( getFxmlLoaderProxy() == null ) {
             throw new NullPointerException();
          }
-         stage.setScene(new Scene(getFxmlLoaderProxy().getRoot()));
+         stage.setScene(getFxmlLoaderProxy().getScene());
       }
       else {
          throw new AssertionError();
@@ -167,22 +159,7 @@ public class StageService implements ApplicationContextAware {
       else if( getShowAfterConfigure() == ShowAfterConfigure.ShowAndWait ) {
          stage.showAndWait();
       }
-
    }
-
-   public void configureStage(Stage stage) {
-      this.stage = stage;
-      configureStage();
-   }
-
-
-
-
-
-
-
-
-
 
 
 

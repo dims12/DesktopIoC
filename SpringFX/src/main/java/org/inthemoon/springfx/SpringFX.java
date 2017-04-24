@@ -3,7 +3,6 @@ package org.inthemoon.springfx;
 import childcontext.ChildContextFactory;
 import javafx.application.Application;
 import javafx.stage.Stage;
-import org.inthemoon.springfx.fx.FXConfig;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
@@ -11,22 +10,6 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  */
 public class SpringFX extends ChildContextFactory {
 
-
-   private static AnnotationConfigApplicationContext staticChildContext;
-
-
-   public static class App extends Application {
-
-      @Override
-      public void start(Stage primaryStage) throws Exception {
-
-         staticChildContext.refresh();
-
-         StageService configurer = staticChildContext.getBean(StageService.class);
-         configurer.configureStage( primaryStage );
-
-      }
-   }
 
    @Override
    public AnnotationConfigApplicationContext createChildContext() {
@@ -42,16 +25,6 @@ public class SpringFX extends ChildContextFactory {
       super(basePackage, restBasePackages);
    }
 
-   public void launch(String[] args) {
-      if( getLastChildContext() == null ) {
-         createChildContext();
-         staticChildContext = getLastChildContext();
 
-         Application.launch(App.class, args);
-      }
-      else {
-         throw new IllegalStateException("JavaFX already started");
-      }
-   }
 
 }

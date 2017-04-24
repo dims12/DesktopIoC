@@ -1,7 +1,8 @@
-package org.inthemoon.springfx.fxml;
+package org.inthemoon.springfx;
 
 import javafx.util.Callback;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.ApplicationContext;
@@ -16,7 +17,15 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  *
  * Created by Dims on 08.04.2017.
  */
-public class ControllerFactory implements ApplicationContextAware, Callback<Class<?>, Object> {
+public class FXControllerFactory implements Callback<Class<?>, Object> {
+
+   private final AnnotationConfigApplicationContext applicationContext;
+
+   @Autowired
+   public FXControllerFactory(AnnotationConfigApplicationContext applicationContext) {
+      this.applicationContext = applicationContext;
+   }
+
    @Override
    public Object call(Class<?> klass) {
       BeanDefinition definition = new RootBeanDefinition(klass);
@@ -25,10 +34,6 @@ public class ControllerFactory implements ApplicationContextAware, Callback<Clas
       return applicationContext.getBean("controller", klass);
    }
 
-   private AnnotationConfigApplicationContext applicationContext;
 
-   @Override
-   public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-      this.applicationContext = (AnnotationConfigApplicationContext) applicationContext;
-   }
+
 }

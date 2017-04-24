@@ -1,7 +1,6 @@
 package org.inthemoon.springfx;
 
 import childcontext.ChildContextFactory;
-import org.inthemoon.springfx.fxml.FXMLConfig;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
@@ -20,7 +19,7 @@ public class SpringFXML extends ChildContextFactory {
 
    @Override
    public AnnotationConfigApplicationContext createChildContext() {
-      register(FXMLConfig.class);
+      register(FXConfig.class);
       return super.createChildContext();
    }
 }
