@@ -1,6 +1,7 @@
 package org.inthemoon.springfxexamples.ex03_severalcontexts_condensed.parent;
 
 import org.inthemoon.springfx.SpringFX;
+import org.inthemoon.springfx.SpringFXApplication;
 import org.inthemoon.springfxexamples.ex03_severalcontexts_condensed.mainwindow.ContextChild01;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -24,7 +25,7 @@ public class ContextParent {
    public static void main(String[] args) {
 
       AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ContextParent.class);
-      SpringFX mainWindowService = context.getBean("mainWindowService", SpringFX.class);
+      SpringFXApplication mainWindowService = context.getBean("mainWindowService", SpringFXApplication.class);
       mainWindowService.launch(args);
 
    }

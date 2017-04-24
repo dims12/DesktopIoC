@@ -7,6 +7,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import org.inthemoon.springfx.SpringFX;
+import org.inthemoon.springfx.SpringFXApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -83,7 +84,7 @@ public class HelloWorldSpringFX {
       // get SpringFX class
       // this class behaves like Spring context factory and receives annotated classes as argument
       // besides beans from this configuration, it adds another service beans, which rund Java FX
-      SpringFX springFX = new SpringFX(HelloWorldSpringFX.class);
+      SpringFXApplication springFX = new SpringFXApplication(HelloWorldSpringFX.class);
 
       // launching
       springFX.launch(args);
