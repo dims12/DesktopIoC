@@ -1,7 +1,6 @@
 package org.inthemoon.springfx;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +18,7 @@ public class FXConfig {
 
    @Bean
    StageService stageService() {
-      return new StageService();
+      return new StageService(applicationContext);
    }
 
    @Bean

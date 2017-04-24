@@ -11,30 +11,26 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 /**
- * This is lastStage configurer. This bean has {@link #configureStage(Stage)}
- * method, on which it configures assigned lastStage, taking required beans
+ * This is {@link Stage} configurer. This bean has {@link #configureStage(Stage)}
+ * method, on which it configures assigned Stage, taking required beans
  * and parameters from context</p>
  *
  * This bean is used to configure {@code primaryStage}, but it also can be used
  * to configure any stages in child contexts.</p>
  *
- * Finaly it can be use to create and configure new lastStage at once
+ * Finally it can be uses to create and configure new Stage at once with {@link #createStage()}
+ * methods.
  *
  * Created by Dims on 25.03.2017.
  */
-public class StageService implements ApplicationContextAware {
+public class StageService  {
 
-   private ApplicationContext applicationContext;
+   private final ApplicationContext applicationContext;
 
-   @Override
-   public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+   @Autowired
+   public StageService(ApplicationContext applicationContext) {
       this.applicationContext = applicationContext;
    }
-
-   public ApplicationContext getApplicationContext() {
-      return applicationContext;
-   }
-
 
 
    private ShowAfterConfigure showAfterConfigure = ShowAfterConfigure.Show;
@@ -43,21 +39,10 @@ public class StageService implements ApplicationContextAware {
       return showAfterConfigure;
    }
 
+   @Autowired(required = false)
    public void setShowAfterConfigure(ShowAfterConfigure showAfterConfigure) {
       this.showAfterConfigure = showAfterConfigure;
    }
-
-
-   private SceneMode sceneMode = SceneMode.SceneBean;
-
-   public SceneMode getSceneMode() {
-      return sceneMode;
-   }
-
-   public void setSceneMode(SceneMode sceneMode) {
-      this.sceneMode = sceneMode;
-   }
-
 
 
 
@@ -108,7 +93,7 @@ public class StageService implements ApplicationContextAware {
       return title;
    }
 
-   @Value("${stage.title}")
+   @Value("${stage.title:#{'No Title'}}")
    public void setTitle(String title) {
       this.title = title;
    }
@@ -137,20 +122,19 @@ public class StageService implements ApplicationContextAware {
       }
 
 
-      if( getSceneMode() == SceneMode.SceneBean ) {
-         if( getScene() == null ) {
-            throw new NullPointerException();
-         }
+      if( getScene() == null ) {
+         throw new NullPointerException();
+      }
+      if( getScene() != null ) {
          stage.setScene(getScene());
       }
-      else if( getSceneMode() == SceneMode.FXMLLoaderBean ) {
-         if( getFxmlLoaderProxy() == null ) {
-            throw new NullPointerException();
-         }
-         stage.setScene(getFxmlLoaderProxy().getScene());
-      }
       else {
-         throw new AssertionError();
+         if( getFxmlLoaderProxy() != null && getFxmlLoaderProxy().getLocation() != null ) {
+            stage.setScene(getFxmlLoaderProxy().getScene());
+         }
+         else {
+            throw new RuntimeException("No scene found (neither as bean nor in FXMLLoaderProxy)");
+         }
       }
 
       if( getShowAfterConfigure() == ShowAfterConfigure.Show ) {
