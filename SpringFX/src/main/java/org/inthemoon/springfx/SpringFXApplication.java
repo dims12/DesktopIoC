@@ -9,7 +9,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  */
 public class SpringFXApplication extends SpringFX {
 
-   public SpringFXApplication(Class<?>[] annotatedClasses) {
+   public SpringFXApplication(Class<?>... annotatedClasses) {
       super(annotatedClasses);
    }
 

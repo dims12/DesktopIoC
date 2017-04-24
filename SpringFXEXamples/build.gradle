@@ -15,7 +15,7 @@ repositories {
 
 dependencies {
 
-    compile group: 'org.inthemoon.spring', name: 'springfx', version: '1.0-SNAPSHOT'
+    compile group: 'org.inthemoon.spring', name: 'springfx', version: '1.1-SNAPSHOT'
 
     compile 'org.springframework:spring-context:4.3.4.RELEASE'
 

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Gradle: org.inthemoon.spring:springfx:1.1-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/inthemoon/spring/springfx/1.1-SNAPSHOT/springfx-1.1-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

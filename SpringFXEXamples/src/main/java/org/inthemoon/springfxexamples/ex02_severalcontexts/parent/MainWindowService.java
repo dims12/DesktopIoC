@@ -2,6 +2,7 @@ package org.inthemoon.springfxexamples.ex02_severalcontexts.parent;
 
 import childcontext.ChildComponentScan;
 import org.inthemoon.springfx.SpringFX;
+import org.inthemoon.springfx.SpringFXApplication;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
@@ -22,5 +23,5 @@ import org.springframework.stereotype.Component;
 @Component
 @PropertySource("classpath:severalcontexts/application.properties")
 @ChildComponentScan("org.inthemoon.springfxexamples.ex02_severalcontexts.mainwindow")
-public class MainWindowService extends SpringFX {
+public class MainWindowService extends SpringFXApplication {
 }
