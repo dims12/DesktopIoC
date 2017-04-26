@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.Locale;
 
 /**
  * If this bean is present in context, it creates {@link FXMLLoader} and
@@ -58,11 +60,18 @@ public class FXMLLoaderProxy {
       }
    }
 
-   @Value("${fxmlLoaction:#{null}")
+   @Value("${fxmlLocation:#{null}}")
    public void setLocation(String location) {
       if( location != null ) {
          try {
-            getFxmlLoader().setLocation(applicationContext.getResource(location).getURL());
+            URL locationURL = applicationContext.getResource(location).getURL();
+            if( locationURL != null ) {
+               getFxmlLoader().setLocation(locationURL);
+            }
+            else {
+               String msg = String.format(Locale.US, "fxmlLocation %s was not found", location);
+               throw new RuntimeException(msg);
+            }
          } catch (IOException e) {
             throw new RuntimeException(e);
          }

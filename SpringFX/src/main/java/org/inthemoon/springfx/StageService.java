@@ -122,9 +122,6 @@ public class StageService  {
       }
 
 
-      if( getScene() == null ) {
-         throw new NullPointerException();
-      }
       if( getScene() != null ) {
          stage.setScene(getScene());
       }
